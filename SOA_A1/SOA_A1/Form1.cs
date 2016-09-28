@@ -21,7 +21,7 @@ namespace SOA_A1
         private void GoButton_Click(object sender, EventArgs e)
         {
             string postUrl = "http://www.dataaccess.com/webservicesserver/numberconversion.wso";
-            string DataToSend = @"<?xml version=""1.0"" encoding=""UTF-8""?><soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:tns=""http://www.dataaccess.com/webservicesserver/"" xmlns:xs=""http://www.w3.org/2001/XMLSchema""><soap:Body><tns:NumberToWords><tns:ubiNum>" + argumentBox.Text + "</tns:ubiNum></tns:NumberToWords></soap:Body></soap:Envelope>";
+            string webRequestText = @"<?xml version=""1.0"" encoding=""UTF-8""?><soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:tns=""http://www.dataaccess.com/webservicesserver/"" xmlns:xs=""http://www.w3.org/2001/XMLSchema""><soap:Body><tns:NumberToWords><tns:ubiNum>" + argumentBox.Text + "</tns:ubiNum></tns:NumberToWords></soap:Body></soap:Envelope>";
             string responseFromServer = "";
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
@@ -32,15 +32,14 @@ namespace SOA_A1
 
             Stream stm = request.GetRequestStream();
 
-            //write the data to the stream aquired from request
+            //write the data to the stream acquired from request
             using (StreamWriter stmw = new StreamWriter(stm))
             {
-                stmw.Write(DataToSend);
+                stmw.Write(webRequestText);
             }
 
             //get the response from the web service
-            WebResponse response;
-            response = request.GetResponse();
+            WebResponse response = request.GetResponse();
 
             stm.Close();
 
@@ -53,7 +52,7 @@ namespace SOA_A1
                 while (stmr.EndOfStream == false)
                 {
                     responseFromServer = stmr.ReadLine();
-                    ReturnLabel.Text += responseFromServer + "<br/>";
+                    ReturnLabel.Text += responseFromServer + "\n";
                 }
             }
         }
