@@ -1,0 +1,6 @@
+{"WebServiceName":"","WebServicePostUrl":"","WebServiceTnsUrl":"",
+		"WebServiceMethods":[
+			{"MethodName":"","MethodDisplayName":"","MethodParam":""},
+			{"MethodName":"","MethodDisplayName":"","MethodParam":""}
+		]
+	}

@@ -32,7 +32,7 @@
             this.ddlWebService = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.ddlWebMethod = new System.Windows.Forms.ComboBox();
-            this.GoButton = new System.Windows.Forms.Button();
+            this.btnSendRequest = new System.Windows.Forms.Button();
             this.ReturnLabel = new System.Windows.Forms.Label();
             this.Argument = new System.Windows.Forms.Label();
             this.argumentBox = new System.Windows.Forms.TextBox();
@@ -50,12 +50,11 @@
             // ddlWebService
             // 
             this.ddlWebService.FormattingEnabled = true;
-            this.ddlWebService.Items.AddRange(new object[] {
-            "Number Conversions"});
             this.ddlWebService.Location = new System.Drawing.Point(142, 13);
             this.ddlWebService.Name = "ddlWebService";
             this.ddlWebService.Size = new System.Drawing.Size(146, 21);
             this.ddlWebService.TabIndex = 1;
+            this.ddlWebService.SelectedIndexChanged += new System.EventHandler(this.ddlWebService_SelectedIndexChanged);
             // 
             // label2
             // 
@@ -69,24 +68,22 @@
             // ddlWebMethod
             // 
             this.ddlWebMethod.FormattingEnabled = true;
-            this.ddlWebMethod.Items.AddRange(new object[] {
-            "Numbers to Words"});
             this.ddlWebMethod.Location = new System.Drawing.Point(142, 56);
             this.ddlWebMethod.Name = "ddlWebMethod";
             this.ddlWebMethod.Size = new System.Drawing.Size(146, 21);
             this.ddlWebMethod.TabIndex = 3;
             // 
-            // GoButton
+            // btnSendRequest
             // 
-            this.GoButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.GoButton.Location = new System.Drawing.Point(195, 145);
-            this.GoButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.GoButton.Name = "GoButton";
-            this.GoButton.Size = new System.Drawing.Size(91, 24);
-            this.GoButton.TabIndex = 4;
-            this.GoButton.Text = "Send Request";
-            this.GoButton.UseVisualStyleBackColor = true;
-            this.GoButton.Click += new System.EventHandler(this.GoButton_Click);
+            this.btnSendRequest.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnSendRequest.Location = new System.Drawing.Point(195, 145);
+            this.btnSendRequest.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSendRequest.Name = "btnSendRequest";
+            this.btnSendRequest.Size = new System.Drawing.Size(91, 24);
+            this.btnSendRequest.TabIndex = 4;
+            this.btnSendRequest.Text = "Send Request";
+            this.btnSendRequest.UseVisualStyleBackColor = true;
+            this.btnSendRequest.Click += new System.EventHandler(this.btnSendRequest_Click);
             // 
             // ReturnLabel
             // 
@@ -109,7 +106,7 @@
             // argumentBox
             // 
             this.argumentBox.Location = new System.Drawing.Point(142, 106);
-            this.argumentBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.argumentBox.Margin = new System.Windows.Forms.Padding(2);
             this.argumentBox.Name = "argumentBox";
             this.argumentBox.Size = new System.Drawing.Size(146, 20);
             this.argumentBox.TabIndex = 7;
@@ -122,7 +119,7 @@
             this.Controls.Add(this.argumentBox);
             this.Controls.Add(this.Argument);
             this.Controls.Add(this.ReturnLabel);
-            this.Controls.Add(this.GoButton);
+            this.Controls.Add(this.btnSendRequest);
             this.Controls.Add(this.ddlWebMethod);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ddlWebService);
@@ -140,7 +137,7 @@
         private System.Windows.Forms.ComboBox ddlWebService;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox ddlWebMethod;
-        private System.Windows.Forms.Button GoButton;
+        private System.Windows.Forms.Button btnSendRequest;
         private System.Windows.Forms.Label ReturnLabel;
         private System.Windows.Forms.Label Argument;
         private System.Windows.Forms.TextBox argumentBox;
