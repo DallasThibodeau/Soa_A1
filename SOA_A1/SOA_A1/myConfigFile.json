@@ -1,8 +1,37 @@
 {"WebServicesList":[
 	{"WebServiceName":"Number Conversions","WebServicePostUrl":"http://www.dataaccess.com/webservicesserver/numberconversion.wso","WebServiceTnsUrl":"http://www.dataaccess.com/webservicesserver/",
 		"WebServiceMethods":[
-			{"MethodName":"NumberToWords","MethodDisplayName":"Numbers to Words","MethodParam":"Number"},
-			{"MethodName":"NumberToDollars","MethodDisplayName":"Number to Dollars","MethodParam":"None"}
+			{"MethodName":"NumberToWords","MethodDisplayName":"Numbers to Words",
+				"ParameterInfo":[
+					{"ParamName":"ubiNum","ParamValue":"42"}
+				]
+			},
+			{"MethodName":"NumberToDollars","MethodDisplayName":"Number to Dollars",
+				"ParameterInfo":[
+					{"ParamName":"dNum","ParamValue":""}
+				]
+			}
+		]
+	},
+	{"WebServiceName":"Football Pool","WebServicePostUrl":"http://footballpool.dataaccess.eu/data/info.wso","WebServiceTnsUrl":"http://footballpool.dataaccess.eu",
+		"WebServiceMethods":[
+			{"MethodName":"AllPlayerNames","MethodDisplayName":"Get All Player's Names",
+				"ParameterInfo":[
+					{"ParamName":"bSelected","ParamValue":""}
+				]
+			},
+			{"MethodName":"TopSelectedGoalScorers","MethodDisplayName":"Top Goal Scorers",
+				"ParameterInfo":[
+					{"ParamName":"iTopN","ParamValue":""}
+				]
+			},
+			{"MethodName":"StadiumNames","MethodDisplayName":"Stadium Names"},
+			{"MethodName":"StadiumInfo","MethodDisplayName":"Stadium Info",
+				"ParameterInfo":[
+					{"ParamName":"sStadiumName","ParamValue":""}
+				]
+			},
+			{"MethodName":"Teams","MethodDisplayName":"Teams"}
 		]
 	}	
 ]}

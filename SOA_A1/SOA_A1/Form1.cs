@@ -50,7 +50,7 @@ namespace SOA_A1
         {
             string myConfigFileData = "";
             MyErrorMessage = ""; // reset error message
-            MultipleWebServices theServices = new MultipleWebServices();
+            MultipleWebServices webServices = new MultipleWebServices();
 
             // read config file
             try
@@ -65,10 +65,10 @@ namespace SOA_A1
             //parse config file into an object
             try
             {
-                theServices = new JavaScriptSerializer().Deserialize<MultipleWebServices>(myConfigFileData);
+                webServices = new JavaScriptSerializer().Deserialize<MultipleWebServices>(myConfigFileData);
 
                 //check if we actually have some objects
-                if (MyErrorMessage == "" && (theServices == null || theServices.WebServicesList == null || theServices.WebServicesList.Count <= 0))
+                if (MyErrorMessage == "" && (webServices == null || webServices.WebServicesList == null || webServices.WebServicesList.Count <= 0))
                 {
                     MyErrorMessage = "No objects/services were read from the config file.";
                 }
@@ -77,61 +77,78 @@ namespace SOA_A1
             {
                 MyErrorMessage = "There was a problem de-serializing the JSON object in the config file. Exception message: " + ex.Message;
             }
-
-            
-            return theServices;
+                        
+            return webServices;
         }
 
-        private void GoButton_Click(object sender, EventArgs e)
-        {
-            string postUrl = "http://www.dataaccess.com/webservicesserver/numberconversion.wso";
-            string webRequestText = @"<?xml version=""1.0"" encoding=""UTF-8""?><soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:tns=""http://www.dataaccess.com/webservicesserver/"" xmlns:xs=""http://www.w3.org/2001/XMLSchema""><soap:Body><tns:NumberToWords><tns:ubiNum>" + argumentBox.Text + "</tns:ubiNum></tns:NumberToWords></soap:Body></soap:Envelope>";
-            string responseFromServer = "";
+        //private void GoButton_Click(object sender, EventArgs e)
+        //{
+        //    string postUrl = "http://www.dataaccess.com/webservicesserver/numberconversion.wso";
+        //    string webRequestText = @"<?xml version=""1.0"" encoding=""UTF-8""?><soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:tns=""http://www.dataaccess.com/webservicesserver/"" xmlns:xs=""http://www.w3.org/2001/XMLSchema""><soap:Body><tns:NumberToWords><tns:ubiNum>" + argumentBox.Text + "</tns:ubiNum></tns:NumberToWords></soap:Body></soap:Envelope>";
+        //    string responseFromServer = "";
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
-            request.Headers.Add("SOAPAction", "\" " + postUrl + "\"");
-            request.ContentType = "text/xml;charset=\"utf-8\"";
-            request.Accept = "text/xml";
-            request.Method = "POST";
+        //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
+        //    request.Headers.Add("SOAPAction", "\" " + postUrl + "\"");
+        //    request.ContentType = "text/xml;charset=\"utf-8\"";
+        //    request.Accept = "text/xml";
+        //    request.Method = "POST";
 
-            Stream stm = request.GetRequestStream();
+        //    Stream stm = request.GetRequestStream();
 
-            //write the data to the stream acquired from request
-            using (StreamWriter stmw = new StreamWriter(stm))
-            {
-                stmw.Write(webRequestText);
-            }
+        //    //write the data to the stream acquired from request
+        //    using (StreamWriter stmw = new StreamWriter(stm))
+        //    {
+        //        stmw.Write(webRequestText);
+        //    }
 
-            //get the response from the web service
-            WebResponse response = request.GetResponse();
+        //    //get the response from the web service
+        //    WebResponse response = request.GetResponse();
 
-            stm.Close();
+        //    stm.Close();
 
-            stm = response.GetResponseStream();
+        //    stm = response.GetResponseStream();
 
-            //parse out any information in the services response
-            using (StreamReader stmr = new StreamReader(stm))
-            {
-                ReturnLabel.Text = "";
-                while (stmr.EndOfStream == false)
-                {
-                    responseFromServer = stmr.ReadLine();
-                    ReturnLabel.Text += responseFromServer + "\n";
-                }
-            }
-        }
+        //    //parse out any information in the services response
+        //    using (StreamReader stmr = new StreamReader(stm))
+        //    {
+        //        ReturnLabel.Text = "";
+        //        while (stmr.EndOfStream == false)
+        //        {
+        //            responseFromServer = stmr.ReadLine();
+        //            ReturnLabel.Text += responseFromServer + "\n";
+        //        }
+        //    }
+        //}
 
 
         private void btnSendRequest_Click(object sender, EventArgs e)
         {
             string postUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServicePostUrl;
+            string webServiceTnsUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceTnsUrl;
+            string methodName = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].MethodName;
+            
             string responseFromServer = "";
+            
+            //create the beginning of the web request text
             string webRequestText = @"<?xml version=""1.0"" encoding=""UTF-8""?><soap:Envelope xmlns:soap='" + MyConstants.SoapEnvelopeUrl +
-                "' xmlns:tns='" + AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceTnsUrl +
-                "' xmlns:xs='" + MyConstants.XmlSchemaUrl + "'><soap:Body><tns:" + AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].MethodName +
-                "><tns:ubiNum>" + argumentBox.Text + "</tns:ubiNum></tns:" + AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].MethodName +
-                "></soap:Body></soap:Envelope>";
-            //NumberToWords
+                "' xmlns:tns='" + webServiceTnsUrl +
+                "' xmlns:xs='" + MyConstants.XmlSchemaUrl + "'><soap:Body><tns:" + methodName + ">";
+
+            if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo != null)
+            {
+                //add parameters to the web request text
+                foreach (var parameter in AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo)
+                {
+                    webRequestText += "<tns:" + parameter.ParamName +
+                    ">" + parameter.ParamValue +
+                    "</tns:" + parameter.ParamName +
+                    ">";
+                }
+            }
+
+            //finish the web request text
+            webRequestText += "</tns:" + methodName + "></soap:Body></soap:Envelope>";
+            
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
             request.Headers.Add("SOAPAction", "\" " + postUrl + "\"");
@@ -163,7 +180,9 @@ namespace SOA_A1
                     responseFromServer = stmr.ReadLine();
                     ReturnLabel.Text += responseFromServer + "\n";
                 }
+
             }
+
         }
 
 
@@ -171,6 +190,7 @@ namespace SOA_A1
         {
             int index = ddlWebService.SelectedIndex;
 
+            dgvParameters.Rows.Clear();
             ddlWebMethod.Items.Clear();
 
             try
@@ -180,6 +200,12 @@ namespace SOA_A1
                 {
                     ddlWebMethod.Items.Add(method.MethodDisplayName);
                 }
+
+                if(ddlWebMethod.Items.Count > 0)
+                {
+                    //make the first method the default
+                    ddlWebMethod.SelectedIndex = 0;
+                }
             }
             catch
             {
@@ -187,5 +213,59 @@ namespace SOA_A1
             }
 
         }
+
+
+        private void ddlWebMethod_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int webServiceIndex = ddlWebService.SelectedIndex;
+            int methodIndex = ddlWebMethod.SelectedIndex;
+            MyErrorMessage = "";
+
+            dgvParameters.Rows.Clear();
+
+            try
+            {
+                if (AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo == null ||
+                    AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo.Count <= 0)
+                {
+                    //method has no parameters
+                }
+                else
+                {
+                    //need to create a row for each parameter
+                    foreach (var parameter in AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo)
+                    {
+                        if (parameter.ParamName != "")
+                        {
+                            dgvParameters.Rows.Add(new string[] { parameter.ParamName, parameter.ParamValue });
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                MyErrorMessage = "No Parameters Found";
+            }
+
+        }
+
+
+        private void dgvParameters_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            int columnIndex = e.ColumnIndex;
+            int rowIndex = e.RowIndex;
+            int webServiceIndex = ddlWebService.SelectedIndex;
+            int methodIndex = ddlWebMethod.SelectedIndex;
+
+            if (columnIndex >= 0 && rowIndex >= 0)
+            {
+                var newValue = dgvParameters.Rows[rowIndex].Cells[columnIndex].Value.ToString();
+
+                AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].ParamValue = newValue;
+            }
+            
+        }
+
     }
+
 }

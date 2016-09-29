@@ -1,0 +1,8 @@
+{"WebServicesList":[
+	{"WebServiceName":"Number Conversions","WebServicePostUrl":"http://www.dataaccess.com/webservicesserver/numberconversion.wso","WebServiceTnsUrl":"http://www.dataaccess.com/webservicesserver/",
+		"WebServiceMethods":[
+			{"MethodName":"NumberToWords","MethodDisplayName":"Numbers to Words","MethodParam":"Number"},
+			{"MethodName":"NumberToDollars","MethodDisplayName":"Number to Dollars","MethodParam":"None"}
+		]
+	}	
+]}

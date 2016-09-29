@@ -34,8 +34,12 @@
             this.ddlWebMethod = new System.Windows.Forms.ComboBox();
             this.btnSendRequest = new System.Windows.Forms.Button();
             this.ReturnLabel = new System.Windows.Forms.Label();
-            this.Argument = new System.Windows.Forms.Label();
-            this.argumentBox = new System.Windows.Forms.TextBox();
+            this.gpbParameters = new System.Windows.Forms.GroupBox();
+            this.dgvParameters = new System.Windows.Forms.DataGridView();
+            this.ParameterName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ParameterValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.gpbParameters.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvParameters)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -72,11 +76,12 @@
             this.ddlWebMethod.Name = "ddlWebMethod";
             this.ddlWebMethod.Size = new System.Drawing.Size(146, 21);
             this.ddlWebMethod.TabIndex = 3;
+            this.ddlWebMethod.SelectedIndexChanged += new System.EventHandler(this.ddlWebMethod_SelectedIndexChanged);
             // 
             // btnSendRequest
             // 
             this.btnSendRequest.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnSendRequest.Location = new System.Drawing.Point(195, 145);
+            this.btnSendRequest.Location = new System.Drawing.Point(197, 113);
             this.btnSendRequest.Margin = new System.Windows.Forms.Padding(2);
             this.btnSendRequest.Name = "btnSendRequest";
             this.btnSendRequest.Size = new System.Drawing.Size(91, 24);
@@ -94,30 +99,47 @@
             this.ReturnLabel.Size = new System.Drawing.Size(0, 13);
             this.ReturnLabel.TabIndex = 5;
             // 
-            // Argument
+            // gpbParameters
             // 
-            this.Argument.AutoSize = true;
-            this.Argument.Location = new System.Drawing.Point(16, 110);
-            this.Argument.Name = "Argument";
-            this.Argument.Size = new System.Drawing.Size(55, 13);
-            this.Argument.TabIndex = 6;
-            this.Argument.Text = "Argument:";
+            this.gpbParameters.Controls.Add(this.dgvParameters);
+            this.gpbParameters.Location = new System.Drawing.Point(340, 12);
+            this.gpbParameters.Name = "gpbParameters";
+            this.gpbParameters.Size = new System.Drawing.Size(330, 160);
+            this.gpbParameters.TabIndex = 8;
+            this.gpbParameters.TabStop = false;
+            this.gpbParameters.Text = "Parameters";
             // 
-            // argumentBox
+            // dgvParameters
             // 
-            this.argumentBox.Location = new System.Drawing.Point(142, 106);
-            this.argumentBox.Margin = new System.Windows.Forms.Padding(2);
-            this.argumentBox.Name = "argumentBox";
-            this.argumentBox.Size = new System.Drawing.Size(146, 20);
-            this.argumentBox.TabIndex = 7;
+            this.dgvParameters.AllowUserToAddRows = false;
+            this.dgvParameters.AllowUserToDeleteRows = false;
+            this.dgvParameters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvParameters.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ParameterName,
+            this.ParameterValue});
+            this.dgvParameters.Location = new System.Drawing.Point(7, 20);
+            this.dgvParameters.Name = "dgvParameters";
+            this.dgvParameters.Size = new System.Drawing.Size(295, 125);
+            this.dgvParameters.TabIndex = 0;
+            this.dgvParameters.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvParameters_CellValueChanged);
+            // 
+            // ParameterName
+            // 
+            this.ParameterName.HeaderText = "Parameter Name";
+            this.ParameterName.Name = "ParameterName";
+            this.ParameterName.ReadOnly = true;
+            // 
+            // ParameterValue
+            // 
+            this.ParameterValue.HeaderText = "Value";
+            this.ParameterValue.Name = "ParameterValue";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(604, 361);
-            this.Controls.Add(this.argumentBox);
-            this.Controls.Add(this.Argument);
+            this.ClientSize = new System.Drawing.Size(684, 361);
+            this.Controls.Add(this.gpbParameters);
             this.Controls.Add(this.ReturnLabel);
             this.Controls.Add(this.btnSendRequest);
             this.Controls.Add(this.ddlWebMethod);
@@ -126,6 +148,8 @@
             this.Controls.Add(this.label1);
             this.Name = "Form1";
             this.Text = "SOA A1 - William Boldt and Dallas Thibodeau";
+            this.gpbParameters.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvParameters)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -139,8 +163,10 @@
         private System.Windows.Forms.ComboBox ddlWebMethod;
         private System.Windows.Forms.Button btnSendRequest;
         private System.Windows.Forms.Label ReturnLabel;
-        private System.Windows.Forms.Label Argument;
-        private System.Windows.Forms.TextBox argumentBox;
+        private System.Windows.Forms.GroupBox gpbParameters;
+        private System.Windows.Forms.DataGridView dgvParameters;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ParameterName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ParameterValue;
     }
 }
 

@@ -9,6 +9,7 @@ namespace SOA_A1
     {
         public string MethodName { get; set; }
         public string MethodDisplayName { get; set; }
-        public string MethodParam { get; set; }
+
+        public IList<ParameterInfo> ParameterInfo { get; set; }
     }
 }
