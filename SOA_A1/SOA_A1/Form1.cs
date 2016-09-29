@@ -174,13 +174,17 @@ namespace SOA_A1
             //parse out any information in the services response
             using (StreamReader stmr = new StreamReader(stm))
             {
-                ReturnLabel.Text = "";
+                txtRequestResponse.Text = "";
+                StringBuilder sb = new StringBuilder();
+
                 while (stmr.EndOfStream == false)
                 {
                     responseFromServer = stmr.ReadLine();
-                    ReturnLabel.Text += responseFromServer + "\n";
+                    sb.Append(responseFromServer);
+                    sb.Append(MyConstants.NewLine);
                 }
 
+                txtRequestResponse.Text = sb.ToString();
             }
 
         }
@@ -237,7 +241,7 @@ namespace SOA_A1
                     {
                         if (parameter.ParamName != "")
                         {
-                            dgvParameters.Rows.Add(new string[] { parameter.ParamName, parameter.ParamValue });
+                            dgvParameters.Rows.Add(new string[] { parameter.ParamName, parameter.ParamValue, parameter.DataType, parameter.Required.ToString() });
                         }
                     }
                 }

@@ -36,8 +36,11 @@
             this.ReturnLabel = new System.Windows.Forms.Label();
             this.gpbParameters = new System.Windows.Forms.GroupBox();
             this.dgvParameters = new System.Windows.Forms.DataGridView();
+            this.txtRequestResponse = new System.Windows.Forms.TextBox();
             this.ParameterName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ParameterValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Required = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.gpbParameters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvParameters)).BeginInit();
             this.SuspendLayout();
@@ -56,7 +59,7 @@
             this.ddlWebService.FormattingEnabled = true;
             this.ddlWebService.Location = new System.Drawing.Point(142, 13);
             this.ddlWebService.Name = "ddlWebService";
-            this.ddlWebService.Size = new System.Drawing.Size(146, 21);
+            this.ddlWebService.Size = new System.Drawing.Size(175, 21);
             this.ddlWebService.TabIndex = 1;
             this.ddlWebService.SelectedIndexChanged += new System.EventHandler(this.ddlWebService_SelectedIndexChanged);
             // 
@@ -74,14 +77,14 @@
             this.ddlWebMethod.FormattingEnabled = true;
             this.ddlWebMethod.Location = new System.Drawing.Point(142, 56);
             this.ddlWebMethod.Name = "ddlWebMethod";
-            this.ddlWebMethod.Size = new System.Drawing.Size(146, 21);
+            this.ddlWebMethod.Size = new System.Drawing.Size(175, 21);
             this.ddlWebMethod.TabIndex = 3;
             this.ddlWebMethod.SelectedIndexChanged += new System.EventHandler(this.ddlWebMethod_SelectedIndexChanged);
             // 
             // btnSendRequest
             // 
             this.btnSendRequest.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnSendRequest.Location = new System.Drawing.Point(197, 113);
+            this.btnSendRequest.Location = new System.Drawing.Point(226, 113);
             this.btnSendRequest.Margin = new System.Windows.Forms.Padding(2);
             this.btnSendRequest.Name = "btnSendRequest";
             this.btnSendRequest.Size = new System.Drawing.Size(91, 24);
@@ -104,7 +107,7 @@
             this.gpbParameters.Controls.Add(this.dgvParameters);
             this.gpbParameters.Location = new System.Drawing.Point(340, 12);
             this.gpbParameters.Name = "gpbParameters";
-            this.gpbParameters.Size = new System.Drawing.Size(330, 160);
+            this.gpbParameters.Size = new System.Drawing.Size(470, 160);
             this.gpbParameters.TabIndex = 8;
             this.gpbParameters.TabStop = false;
             this.gpbParameters.Text = "Parameters";
@@ -116,12 +119,24 @@
             this.dgvParameters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvParameters.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ParameterName,
-            this.ParameterValue});
-            this.dgvParameters.Location = new System.Drawing.Point(7, 20);
+            this.ParameterValue,
+            this.DataType,
+            this.Required});
+            this.dgvParameters.Location = new System.Drawing.Point(10, 21);
             this.dgvParameters.Name = "dgvParameters";
-            this.dgvParameters.Size = new System.Drawing.Size(295, 125);
+            this.dgvParameters.Size = new System.Drawing.Size(445, 125);
             this.dgvParameters.TabIndex = 0;
             this.dgvParameters.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvParameters_CellValueChanged);
+            // 
+            // txtRequestResponse
+            // 
+            this.txtRequestResponse.BackColor = System.Drawing.SystemColors.Control;
+            this.txtRequestResponse.Location = new System.Drawing.Point(10, 179);
+            this.txtRequestResponse.Multiline = true;
+            this.txtRequestResponse.Name = "txtRequestResponse";
+            this.txtRequestResponse.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtRequestResponse.Size = new System.Drawing.Size(800, 261);
+            this.txtRequestResponse.TabIndex = 9;
             // 
             // ParameterName
             // 
@@ -134,11 +149,24 @@
             this.ParameterValue.HeaderText = "Value";
             this.ParameterValue.Name = "ParameterValue";
             // 
+            // DataType
+            // 
+            this.DataType.HeaderText = "Data Type";
+            this.DataType.Name = "DataType";
+            this.DataType.ReadOnly = true;
+            // 
+            // Required
+            // 
+            this.Required.HeaderText = "Required";
+            this.Required.Name = "Required";
+            this.Required.ReadOnly = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(684, 361);
+            this.ClientSize = new System.Drawing.Size(834, 461);
+            this.Controls.Add(this.txtRequestResponse);
             this.Controls.Add(this.gpbParameters);
             this.Controls.Add(this.ReturnLabel);
             this.Controls.Add(this.btnSendRequest);
@@ -165,8 +193,11 @@
         private System.Windows.Forms.Label ReturnLabel;
         private System.Windows.Forms.GroupBox gpbParameters;
         private System.Windows.Forms.DataGridView dgvParameters;
+        private System.Windows.Forms.TextBox txtRequestResponse;
         private System.Windows.Forms.DataGridViewTextBoxColumn ParameterName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ParameterValue;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DataType;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Required;
     }
 }
 
