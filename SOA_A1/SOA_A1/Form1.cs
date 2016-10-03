@@ -185,6 +185,12 @@ namespace SOA_A1
                 }
 
                 txtRequestResponse.Text = sb.ToString();
+
+
+                DataSet set = new DataSet();
+                StringReader sr = new StringReader(sb.ToString());
+                set.ReadXml(sr);
+                XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
             }
 
         }
