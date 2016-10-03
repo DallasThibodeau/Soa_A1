@@ -1,65 +1,105 @@
 {"WebServicesList":[
-	{"WebServiceName":"Number Conversions","WebServicePostUrl":"http://www.dataaccess.com/webservicesserver/numberconversion.wso","WebServiceTnsUrl":"http://www.dataaccess.com/webservicesserver/",
+	{"WebServiceName":"Country Details","WebServicePostUrl":"http://www.webservicex.net/country.asmx","WebServiceBaseUrl":"http://www.webserviceX.NET","UseTns":"false",
 		"WebServiceMethods":[
-			{"MethodName":"NumberToWords","MethodDisplayName":"Numbers to Words",
+			{"MethodName":"GetCountries","MethodDisplayName":"List of Countries","ReturnsDataSet":"true","MethodUrl":"http://www.webserviceX.NET/GetCountries"},			
+			{"MethodName":"GetCurrencies","MethodDisplayName":"The Currencies of Countries","ReturnsDataSet":"true","MethodUrl":"http://www.webserviceX.NET/GetCurrencies"},			
+			{"MethodName":"GetCountryByCountryCode","MethodDisplayName":"Country by Country Code","ReturnsDataSet":"true","MethodUrl":"http://www.webserviceX.NET/GetCountryByCountryCode",
 				"ParameterInfo":[
-					{"ParamName":"ubiNum","ParamValue":"42","DataType":"integer","Required":"true"}
+					{"ParamName":"CountryCode","ParamValue":"Ca","DataType":"string","Required":"false"}
 				]
 			},
-			{"MethodName":"NumberToDollars","MethodDisplayName":"Number to Dollars",
+			{"MethodName":"GetISOCountryCodeByCountyName","MethodDisplayName":"ISO Country Code by Country Name","ReturnsDataSet":"true","MethodUrl":"http://www.webserviceX.NET/GetISOCountryCodeByCountyName",
 				"ParameterInfo":[
-					{"ParamName":"dNum","ParamValue":"","DataType":"decimal","Required":"true"}
+					{"ParamName":"CountryName","ParamValue":"Canada","DataType":"string","Required":"false"}
 				]
 			}
 		]
 	},
-	{"WebServiceName":"Football Pool","WebServicePostUrl":"http://footballpool.dataaccess.eu/data/info.wso","WebServiceTnsUrl":"http://footballpool.dataaccess.eu",
+	{"WebServiceName":"Airport Information","WebServicePostUrl":"http://www.webservicex.net/airport.asmx","WebServiceBaseUrl":"http://www.webserviceX.NET","UseTns":"false",
 		"WebServiceMethods":[
-			{"MethodName":"AllPlayerNames","MethodDisplayName":"Get All Player's Names",
+			{"MethodName":"GetAirportInformationByCountry","MethodDisplayName":"Airport Info by Country","ReturnsDataSet":"true","MethodUrl":"http://www.webserviceX.NET/GetAirportInformationByCountry",
 				"ParameterInfo":[
-					{"ParamName":"bSelected","ParamValue":"","DataType":"string","Required":"true"}
+					{"ParamName":"country","ParamValue":"Canada","DataType":"string","Required":"false"}
 				]
 			},
-			{"MethodName":"TopSelectedGoalScorers","MethodDisplayName":"Top Goal Scorers",
+			{"MethodName":"getAirportInformationByAirportCode","MethodDisplayName":"Airport Info by Airport Code","ReturnsDataSet":"true","MethodUrl":"http://www.webserviceX.NET/getAirportInformationByAirportCode",
 				"ParameterInfo":[
-					{"ParamName":"iTopN","ParamValue":"","DataType":"integer","Required":"true"}
+					{"ParamName":"airportCode","ParamValue":"TUX","DataType":"string","Required":"true"}
 				]
 			},
-			{"MethodName":"StadiumNames","MethodDisplayName":"Stadium Names"},
-			{"MethodName":"StadiumInfo","MethodDisplayName":"Stadium Info",
+			{"MethodName":"getAirportInformationByCityOrAirportName","MethodDisplayName":"Airport Info by City or Airport Name","ReturnsDataSet":"true","MethodUrl":"http://www.webserviceX.NET/getAirportInformationByCityOrAirportName",
 				"ParameterInfo":[
-					{"ParamName":"sStadiumName","ParamValue":"","DataType":"string","Required":"true"}
+					{"ParamName":"cityOrAirportName","ParamValue":"TUMBLER RIDGE","DataType":"string","Required":"false"}
 				]
 			},
-			{"MethodName":"Teams","MethodDisplayName":"Teams"}
-		]
-	},
-	{"WebServiceName":"Country Information","WebServicePostUrl":"http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso","WebServiceTnsUrl":"http://www.oorsprong.org/websamples.countryinfo",
-		"WebServiceMethods":[
-			{"MethodName":"ListOfCountryNamesByName","MethodDisplayName":"List Of Countries"},
-			{"MethodName":"CapitalCity","MethodDisplayName":"Country Capitol City",
+			{"MethodName":"getAirportInformationByISOCountryCode","MethodDisplayName":"Airport Info by ISO County Code","ReturnsDataSet":"true","MethodUrl":"http://www.webserviceX.NET/getAirportInformationByISOCountryCode",
 				"ParameterInfo":[
-					{"ParamName":"sCountryISOCode","ParamValue":"","DataType":"string","Required":"true"}
-				]
-			},
-			{"MethodName":"ListOfCurrenciesByCode","MethodDisplayName":"List Of Currencies (by code)"},
-			{"MethodName":"CountryISOCode","MethodDisplayName":"Country ISO Code",
-				"ParameterInfo":[
-					{"ParamName":"sCountryName","ParamValue":"","DataType":"string","Required":"true"}
+					{"ParamName":"CountryAbbrviation","ParamValue":"Ca","DataType":"string","Required":"false"}
 				]
 			}
 		]
 	},
-	{"WebServiceName":"Text Casing","WebServicePostUrl":"http://www.dataaccess.com/webservicesserver/textcasing.wso","WebServiceTnsUrl":"http://www.dataaccess.com/webservicesserver/",
+	{"WebServiceName":"Number Conversions","WebServicePostUrl":"http://www.dataaccess.com/webservicesserver/numberconversion.wso","WebServiceBaseUrl":"","UseTns":"true",
 		"WebServiceMethods":[
-			{"MethodName":"InvertStringCase","MethodDisplayName":"Invert String Case",
+			{"MethodName":"NumberToWords","MethodDisplayName":"Numbers to Words","ReturnsDataSet":"false","MethodUrl":"http://www.dataaccess.com/webservicesserver/",
 				"ParameterInfo":[
-					{"ParamName":"sAString","ParamValue":"","DataType":"string","Required":"true"}
+					{"ParamName":"ubiNum","ParamValue":"42","DataType":"integer","Required":"false"}
 				]
 			},
-			{"MethodName":"InvertCaseFirstAdjustStringToCurrent","MethodDisplayName":"Conform String to First Letter Casing",
+			{"MethodName":"NumberToDollars","MethodDisplayName":"Number to Dollars","ReturnsDataSet":"false","MethodUrl":"http://www.dataaccess.com/webservicesserver/",
 				"ParameterInfo":[
-					{"ParamName":"sAString","ParamValue":"","DataType":"string","Required":"true"}
+					{"ParamName":"dNum","ParamValue":"12.55","DataType":"decimal","Required":"false"}
+				]
+			}
+		]
+	},
+	{"WebServiceName":"Football Pool","WebServicePostUrl":"http://footballpool.dataaccess.eu/data/info.wso","WebServiceBaseUrl":"","UseTns":"true",
+		"WebServiceMethods":[
+			{"MethodName":"AllPlayerNames","MethodDisplayName":"Get All Player's Names","ReturnsDataSet":"false","MethodUrl":"http://footballpool.dataaccess.eu",
+				"ParameterInfo":[
+					{"ParamName":"bSelected","ParamValue":"","DataType":"string","Required":"false"}
+				]
+			},
+			{"MethodName":"TopSelectedGoalScorers","MethodDisplayName":"Top Goal Scorers","ReturnsDataSet":"false","MethodUrl":"http://footballpool.dataaccess.eu",
+				"ParameterInfo":[
+					{"ParamName":"iTopN","ParamValue":"","DataType":"integer","Required":"false"}
+				]
+			},
+			{"MethodName":"StadiumNames","MethodDisplayName":"Stadium Names","ReturnsDataSet":"false","MethodUrl":"http://footballpool.dataaccess.eu"},
+			{"MethodName":"StadiumInfo","MethodDisplayName":"Stadium Info","ReturnsDataSet":"false","MethodUrl":"http://footballpool.dataaccess.eu",
+				"ParameterInfo":[
+					{"ParamName":"sStadiumName","ParamValue":"Allianz Riviera","DataType":"string","Required":"true"}
+				]
+			},
+			{"MethodName":"Teams","MethodDisplayName":"Teams","ReturnsDataSet":"false","MethodUrl":"http://footballpool.dataaccess.eu"}
+		]
+	},
+	{"WebServiceName":"Country Information","WebServicePostUrl":"http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso","WebServiceBaseUrl":"","UseTns":"true",
+		"WebServiceMethods":[
+			{"MethodName":"ListOfCountryNamesByName","MethodDisplayName":"List Of Countries","ReturnsDataSet":"false","MethodUrl":"http://www.oorsprong.org/websamples.countryinfo"},
+			{"MethodName":"CapitalCity","MethodDisplayName":"Country Capitol City","ReturnsDataSet":"false","MethodUrl":"http://www.oorsprong.org/websamples.countryinfo",
+				"ParameterInfo":[
+					{"ParamName":"sCountryISOCode","ParamValue":"CH","DataType":"string","Required":"true"}
+				]
+			},
+			{"MethodName":"ListOfCurrenciesByCode","MethodDisplayName":"List Of Currencies (by code)","ReturnsDataSet":"false","MethodUrl":"http://www.oorsprong.org/websamples.countryinfo"},
+			{"MethodName":"CountryISOCode","MethodDisplayName":"Country ISO Code","ReturnsDataSet":"false","MethodUrl":"http://www.oorsprong.org/websamples.countryinfo",
+				"ParameterInfo":[
+					{"ParamName":"sCountryName","ParamValue":"","DataType":"string","Required":"false"}
+				]
+			}
+		]
+	},	
+	{"WebServiceName":"Text Casing","WebServicePostUrl":"http://www.dataaccess.com/webservicesserver/textcasing.wso","WebServiceBaseUrl":"","UseTns":"true",
+		"WebServiceMethods":[
+			{"MethodName":"InvertStringCase","MethodDisplayName":"Invert String Case","ReturnsDataSet":"false","MethodUrl":"http://www.dataaccess.com/webservicesserver/",
+				"ParameterInfo":[
+					{"ParamName":"sAString","ParamValue":"TESTing","DataType":"string","Required":"true"}
+				]
+			},
+			{"MethodName":"InvertCaseFirstAdjustStringToCurrent","MethodDisplayName":"Conform String to First Letter Casing","ReturnsDataSet":"false","MethodUrl":"http://www.dataaccess.com/webservicesserver/",
+				"ParameterInfo":[
+					{"ParamName":"sAString","ParamValue":"TESting","DataType":"string","Required":"true"}
 				]
 			}
 		]

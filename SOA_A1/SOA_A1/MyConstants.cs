@@ -11,6 +11,7 @@ namespace SOA_A1
         public const string ConfigFileRelativePath = "..\\..\\myConfigFile.json";
         public const string SoapEnvelopeUrl = "http://schemas.xmlsoap.org/soap/envelope/";
         public const string XmlSchemaUrl = "http://www.w3.org/2001/XMLSchema";
+        public const string XmlSchemaInstanceUrl = "http://www.w3.org/2001/XMLSchema-instance";
         public const string NewLine = "\r\n";
     }
 }

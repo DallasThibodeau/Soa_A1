@@ -35,10 +35,16 @@ namespace SOA_A1
                 {
                     ddlWebService.Items.Add(service.WebServiceName);
                 }
+
+                //set the default for the selected web service
+                if (ddlWebService.Items.Count > 0)
+                {
+                    ddlWebService.SelectedIndex = 0;
+                }
+
             }
             
-        }
-
+        }        
 
         private void DispalyErrorMessage(string message)
         {
@@ -124,34 +130,52 @@ namespace SOA_A1
         private void btnSendRequest_Click(object sender, EventArgs e)
         {
             string postUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServicePostUrl;
-            string webServiceTnsUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceTnsUrl;
+            string baseUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceBaseUrl;
+            string webMethodUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].MethodUrl;
             string methodName = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].MethodName;
-            
+            bool methodReturnsDataSet = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ReturnsDataSet;
             string responseFromServer = "";
-            
-            //create the beginning of the web request text
-            string webRequestText = @"<?xml version=""1.0"" encoding=""UTF-8""?><soap:Envelope xmlns:soap='" + MyConstants.SoapEnvelopeUrl +
-                "' xmlns:tns='" + webServiceTnsUrl +
-                "' xmlns:xs='" + MyConstants.XmlSchemaUrl + "'><soap:Body><tns:" + methodName + ">";
 
+            bool useTns = false;
+            string tnsString = "";
+
+            if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].UseTns)
+            {
+                useTns = true;
+                tnsString = "tns:";
+            }
+
+            //create the beginning of the web request text
+            string webRequestText = @"<?xml version='1.0' encoding='UTF-8'?><soap:Envelope xmlns:soap='" + MyConstants.SoapEnvelopeUrl;
+
+            if (useTns)
+            {
+                webRequestText += "' xmlns:tns='" + webMethodUrl;
+            }
+
+            webRequestText += "' xmlns:xsi='" + MyConstants.XmlSchemaInstanceUrl +
+                "' xmlns:xsd='" + MyConstants.XmlSchemaUrl + 
+                "'><soap:Body><" + tnsString + methodName + " xmlns='" + baseUrl + "'>";
+
+            // check if the method we're calling has parameters
             if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo != null)
             {
                 //add parameters to the web request text
                 foreach (var parameter in AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo)
                 {
-                    webRequestText += "<tns:" + parameter.ParamName +
+                    webRequestText += "<" + tnsString + parameter.ParamName +
                     ">" + parameter.ParamValue +
-                    "</tns:" + parameter.ParamName +
+                    "</" + tnsString + parameter.ParamName +
                     ">";
                 }
             }
 
             //finish the web request text
-            webRequestText += "</tns:" + methodName + "></soap:Body></soap:Envelope>";
+            webRequestText += "</" + tnsString + methodName + "></soap:Body></soap:Envelope>";
             
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
-            request.Headers.Add("SOAPAction", "\" " + postUrl + "\"");
+            request.Headers.Add("SOAPAction", webMethodUrl);
             request.ContentType = "text/xml;charset=\"utf-8\"";
             request.Accept = "text/xml";
             request.Method = "POST";
@@ -186,11 +210,22 @@ namespace SOA_A1
 
                 txtRequestResponse.Text = sb.ToString();
 
+                if(methodReturnsDataSet)
+                {
+                    //display data in the XMLGridView
 
-                DataSet set = new DataSet();
-                StringReader sr = new StringReader(sb.ToString());
-                set.ReadXml(sr);
-                XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
+                    /************************
+                     *        Dallas?       *
+                     ************************/
+                }
+                else
+                {
+                    DataSet set = new DataSet();
+                    StringReader sr = new StringReader(sb.ToString());
+                    set.ReadXml(sr);
+                    XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
+                }
+                
             }
 
         }

@@ -9,7 +9,8 @@ namespace SOA_A1
     {
         public string WebServiceName { get; set; }
         public string WebServicePostUrl { get; set; }
-        public string WebServiceTnsUrl { get; set; }
+        public string WebServiceBaseUrl { get; set; }
+        public bool UseTns { get; set; }
 
 
         public IList<WebServiceMethod> WebServiceMethods { get; set; }
