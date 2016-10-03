@@ -142,6 +142,7 @@ namespace SOA_A1
             string methodName = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].MethodName;
             bool methodReturnsDataSet = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ReturnsDataSet;
             string responseFromServer = "";
+            bool argsOkay = true;
 
             bool useTns = false;
             string tnsString = "";
@@ -163,15 +164,20 @@ namespace SOA_A1
             }
 
             webRequestText += "' xmlns:xsi='" + MyConstants.XmlSchemaInstanceUrl +
-                "' xmlns:xsd='" + MyConstants.XmlSchemaUrl + 
+                "' xmlns:xsd='" + MyConstants.XmlSchemaUrl +
                 "'><soap:Body><" + tnsString + methodName + " xmlns='" + baseUrl + "'>";
 
             // check if the method we're calling has parameters
-            if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo != null)
+            if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo != null && AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo.ToString() != "")
             {
                 //add parameters to the web request text
                 foreach (var parameter in AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo)
                 {
+                    if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo[0].Required == true && (parameter.ParamValue == "" || parameter.ParamValue == null))
+                    {
+                        argsOkay = false;
+                        break;
+                    }
                     webRequestText += "<" + tnsString + parameter.ParamName +
                     ">" + parameter.ParamValue +
                     "</" + tnsString + parameter.ParamName +
@@ -179,64 +185,78 @@ namespace SOA_A1
                 }
             }
 
-            //finish the web request text
-            webRequestText += "</" + tnsString + methodName + "></soap:Body></soap:Envelope>";
-            
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
-            request.Headers.Add("SOAPAction", webMethodUrl);
-            request.ContentType = "text/xml;charset=\"utf-8\"";
-            request.Accept = "text/xml";
-            request.Method = "POST";
-
-            Stream stm = request.GetRequestStream();
-
-            //write the data to the stream acquired from request
-            using (StreamWriter stmw = new StreamWriter(stm))
+            if (argsOkay == true)
             {
-                stmw.Write(webRequestText);
+                //finish the web request text
+                webRequestText += "</" + tnsString + methodName + "></soap:Body></soap:Envelope>";
+
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
+                request.Headers.Add("SOAPAction", webMethodUrl);
+                request.ContentType = "text/xml;charset=\"utf-8\"";
+                request.Accept = "text/xml";
+                request.Method = "POST";
+
+
+                try
+                {
+                    Stream stm = request.GetRequestStream();
+
+                    //write the data to the stream acquired from request
+                    using (StreamWriter stmw = new StreamWriter(stm))
+                    {
+                        stmw.Write(webRequestText);
+                    }
+
+                    //get the response from the web service
+                    WebResponse response = request.GetResponse();
+
+                    stm.Close();
+
+                    stm = response.GetResponseStream();
+
+                    //parse out any information in the services response
+                    using (StreamReader stmr = new StreamReader(stm))
+                    {
+                        txtRequestResponse.Text = "";
+                        StringBuilder sb = new StringBuilder();
+
+                        while (stmr.EndOfStream == false)
+                        {
+                            responseFromServer = stmr.ReadLine();
+                            sb.Append(responseFromServer);
+                            sb.Append(MyConstants.NewLine);
+                        }
+
+                        txtRequestResponse.Text = sb.ToString();
+                        DataSet set = new DataSet();
+
+                        if (methodReturnsDataSet)
+                        {
+                            XmlDocument doc = new XmlDocument();
+                            doc.LoadXml(sb.ToString());
+                            StringReader sr = new StringReader(WebUtility.HtmlDecode(doc.InnerXml));
+                            set.ReadXml(sr);
+                            XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
+                        }
+                        else
+                        {
+                            StringReader sr = new StringReader(sb.ToString());
+                            set.ReadXml(sr);
+                            XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
+                        }
+
+                    }
+                }
+                catch (WebException ex)
+                {
+                    txtRequestResponse.Text = "Unableto connect to webservice. Remote name could not be resolved.";
+                }
             }
-
-            //get the response from the web service
-            WebResponse response = request.GetResponse();
-
-            stm.Close();
-
-            stm = response.GetResponseStream();
-
-            //parse out any information in the services response
-            using (StreamReader stmr = new StreamReader(stm))
+            else
             {
-                txtRequestResponse.Text = "";
-                StringBuilder sb = new StringBuilder();
-
-                while (stmr.EndOfStream == false)
-                {
-                    responseFromServer = stmr.ReadLine();
-                    sb.Append(responseFromServer);
-                    sb.Append(MyConstants.NewLine);
-                }
-
-                txtRequestResponse.Text = sb.ToString();
-                DataSet set = new DataSet();
-
-                if (methodReturnsDataSet)
-                {
-                    XmlDocument doc = new XmlDocument();
-                    doc.LoadXml(sb.ToString());
-                    StringReader sr = new StringReader(WebUtility.HtmlDecode(doc.InnerXml));
-                    set.ReadXml(sr);
-                    XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
-                }
-                else
-                {
-                    StringReader sr = new StringReader(sb.ToString());
-                    set.ReadXml(sr);
-                    XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
-                }
-                
+                txtRequestResponse.Text = "Required arguments not filled.";
             }
-
         }
 
 
@@ -313,9 +333,17 @@ namespace SOA_A1
 
             if (columnIndex >= 0 && rowIndex >= 0)
             {
-                var newValue = dgvParameters.Rows[rowIndex].Cells[columnIndex].Value.ToString();
+                if (dgvParameters.Rows[rowIndex].Cells[columnIndex].Value != null)
+                {
+                    var newValue = dgvParameters.Rows[rowIndex].Cells[columnIndex].Value.ToString();
 
-                AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].ParamValue = newValue;
+                    AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].ParamValue = newValue;
+                }
+                else
+                {
+                    AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].ParamValue = "";
+                }
+
             }
             
         }
