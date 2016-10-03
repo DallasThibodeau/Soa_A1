@@ -8,7 +8,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
+using System.Net;
 using System.Web.Script.Serialization;
+using System.Xml;
 
 namespace SOA_A1
 {
@@ -216,18 +218,18 @@ namespace SOA_A1
                 }
 
                 txtRequestResponse.Text = sb.ToString();
+                DataSet set = new DataSet();
 
-                if(methodReturnsDataSet)
+                if (methodReturnsDataSet)
                 {
-                    //display data in the XMLGridView
-
-                    /************************
-                     *        Dallas?       *
-                     ************************/
+                    XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(sb.ToString());
+                    StringReader sr = new StringReader(WebUtility.HtmlDecode(doc.InnerXml));
+                    set.ReadXml(sr);
+                    XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
                 }
                 else
                 {
-                    DataSet set = new DataSet();
                     StringReader sr = new StringReader(sb.ToString());
                     set.ReadXml(sr);
                     XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
