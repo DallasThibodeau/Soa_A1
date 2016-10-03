@@ -13,5 +13,6 @@ namespace SOA_A1
         public const string XmlSchemaUrl = "http://www.w3.org/2001/XMLSchema";
         public const string XmlSchemaInstanceUrl = "http://www.w3.org/2001/XMLSchema-instance";
         public const string NewLine = "\r\n";
+        public const int MaxErrorMessageCharacters = 2048;
     }
 }

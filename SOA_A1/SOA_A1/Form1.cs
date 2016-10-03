@@ -48,7 +48,12 @@ namespace SOA_A1
 
         private void DispalyErrorMessage(string message)
         {
-            MessageBox.Show(message);
+            if(message.Length > MyConstants.MaxErrorMessageCharacters)
+            {
+                message = message.Substring(0, MyConstants.MaxErrorMessageCharacters);
+            }
+
+            MessageBox.Show(message, "An Error Has Occurred");
         }
 
 
@@ -142,6 +147,8 @@ namespace SOA_A1
             if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].UseTns)
             {
                 useTns = true;
+
+                //the method uses tns so we will need to append the text "tns:" to some of the tags
                 tnsString = "tns:";
             }
 
