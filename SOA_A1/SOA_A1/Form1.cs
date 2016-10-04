@@ -20,21 +20,25 @@ namespace SOA_A1
         private string MyErrorMessage = "";
         private bool InvalidParameterWasEntered = false;
 
+        //Form1()
+        //
+        //Initialization function.
+        //Initializes a nummber of UI and backend features such as the method and service lists.
         public Form1()
         {
             InitializeComponent();
 
             AvailibleWebServices = GetWebServices();
-            
+
             // check if there was an error
-            if(MyErrorMessage != "")
+            if (MyErrorMessage != "")
             {
                 DisplayErrorMessage(MyErrorMessage);
             }
             else
             {
                 //we have the services, so populate the 'Services' drop down                
-                foreach(var service in AvailibleWebServices.WebServicesList)
+                foreach (var service in AvailibleWebServices.WebServicesList)
                 {
                     ddlWebService.Items.Add(service.WebServiceName);
                 }
@@ -46,12 +50,12 @@ namespace SOA_A1
                 }
 
             }
-            
-        }        
+
+        }
 
         private void DisplayErrorMessage(string message)
         {
-            if(message.Length > MyConstants.MaxErrorMessageCharacters)
+            if (message.Length > MyConstants.MaxErrorMessageCharacters)
             {
                 message = message.Substring(0, MyConstants.MaxErrorMessageCharacters);
             }
@@ -60,6 +64,12 @@ namespace SOA_A1
         }
 
 
+
+        //GetWebServices()
+        //
+        //Initialization function.
+        //Reads the config file and returns a class containing relevant information on
+        //the webservices and methods documented in the config file.
         private MultipleWebServices GetWebServices()
         {
             string myConfigFileData = "";
@@ -91,7 +101,7 @@ namespace SOA_A1
             {
                 MyErrorMessage = "There was a problem de-serializing the JSON object in the config file. Exception message: " + ex.Message;
             }
-                        
+
             return webServices;
         }
 
@@ -134,6 +144,12 @@ namespace SOA_A1
         //    }
         //}
 
+
+        //btnSendRequest_Click()
+        //
+        //Event driven function driven by the send request button.
+        //Builds and sends a webrequest to a selected web service, 
+        //then receives, parses and displays a web response.
 
         private void btnSendRequest_Click(object sender, EventArgs e)
         {
@@ -269,7 +285,13 @@ namespace SOA_A1
             }
 
         }
-        
+
+        //ddlWebService_SelectedIndexChanged
+        //
+        //Populates the datagridview used for user input for arguments.
+        //Automatically populates said datagridview with relevent data
+        //whenever the webservice is changed.
+
         private void ddlWebService_SelectedIndexChanged(object sender, EventArgs e)
         {
             int index = ddlWebService.SelectedIndex;
@@ -285,7 +307,7 @@ namespace SOA_A1
                     ddlWebMethod.Items.Add(method.MethodDisplayName);
                 }
 
-                if(ddlWebMethod.Items.Count > 0)
+                if (ddlWebMethod.Items.Count > 0)
                 {
                     //make the first method the default
                     ddlWebMethod.SelectedIndex = 0;
@@ -299,6 +321,11 @@ namespace SOA_A1
         }
 
 
+        //ddlWebMethod_SelectedIndexChanged
+        //
+        //Populates the datagridview used for user input for arguments.
+        //Automatically populates said datagridview with relevent data
+        //whenever the webmethod is changed.
         private void ddlWebMethod_SelectedIndexChanged(object sender, EventArgs e)
         {
             int webServiceIndex = ddlWebService.SelectedIndex;
@@ -334,6 +361,12 @@ namespace SOA_A1
         }
 
 
+        //dgvParameters_CellValueChanged
+        //
+        //Event driven function that retreives and assigns argument values after
+        //they are changed.
+
+
         private void dgvParameters_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             int columnIndex = e.ColumnIndex;
@@ -350,8 +383,9 @@ namespace SOA_A1
                     string regexStr = AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].RegularExp;
 
                     Regex r = new Regex(regexStr);
-                    
-                    if (r.IsMatch(newParameterValue)) {
+
+                    if (r.IsMatch(newParameterValue))
+                    {
                         //the value is OK; save it
                         AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].ParamValue = newParameterValue;
                         InvalidParameterWasEntered = false;
@@ -361,13 +395,13 @@ namespace SOA_A1
                         //new value did not meet the requirements
                         string errorMessage = "The new value for '" + parameterName +
                             "' did not meet the Regular Expression: \n\r\n\r'" + regexStr + "'";
-                        
+
                         DisplayErrorMessage(errorMessage);
 
                         AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].ParamValue = "";
                         InvalidParameterWasEntered = true;
                     }
-                                        
+
                 }
                 else
                 {
@@ -375,7 +409,7 @@ namespace SOA_A1
                 }
 
             }
-            
+
         }
 
     }
