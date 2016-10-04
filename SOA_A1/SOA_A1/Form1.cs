@@ -19,6 +19,10 @@ namespace SOA_A1
         private MultipleWebServices AvailibleWebServices;
         private string MyErrorMessage = "";
 
+        //Form1()
+        //
+        //Initialization function.
+        //Initializes a nummber of UI and backend features such as the method and service lists.
         public Form1()
         {
             InitializeComponent();
@@ -58,8 +62,12 @@ namespace SOA_A1
             MessageBox.Show(message, "An Error Has Occurred");
         }
 
-
-        private MultipleWebServices GetWebServices()
+        //GetWebServices()
+        //
+        //Initialization function.
+        //Reads the config file and returns a class containing relevant information on
+        //the webservices and methods documented in the config file.
+         private MultipleWebServices GetWebServices()
         {
             string myConfigFileData = "";
             MyErrorMessage = ""; // reset error message
@@ -133,7 +141,11 @@ namespace SOA_A1
         //    }
         //}
 
-
+        //btnSendRequest_Click()
+        //
+        //Event driven function driven by the send request button.
+        //Builds and sends a webrequest to a selected web service, 
+        //then receives, parses and displays a web response.
         private void btnSendRequest_Click(object sender, EventArgs e)
         {
             string postUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServicePostUrl;
@@ -259,7 +271,11 @@ namespace SOA_A1
             }
         }
 
-
+        //ddlWebService_SelectedIndexChanged
+        //
+        //Populates the datagridview used for user input for arguments.
+        //Automatically populates said datagridview with relevent data
+        //whenever the webservice is changed.
         private void ddlWebService_SelectedIndexChanged(object sender, EventArgs e)
         {
             int index = ddlWebService.SelectedIndex;
@@ -288,7 +304,11 @@ namespace SOA_A1
 
         }
 
-
+        //ddlWebMethod_SelectedIndexChanged
+        //
+        //Populates the datagridview used for user input for arguments.
+        //Automatically populates said datagridview with relevent data
+        //whenever the webmethod is changed.
         private void ddlWebMethod_SelectedIndexChanged(object sender, EventArgs e)
         {
             int webServiceIndex = ddlWebService.SelectedIndex;
@@ -323,7 +343,10 @@ namespace SOA_A1
 
         }
 
-
+        //dgvParameters_CellValueChanged
+        //
+        //Event driven function that retreives and assigns argument values after
+        //they are changed.
         private void dgvParameters_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             int columnIndex = e.ColumnIndex;
