@@ -11,5 +11,6 @@ namespace SOA_A1
         public string ParamValue { get; set; }
         public string DataType { get; set; }
         public bool Required { get; set; }
+        public string RegularExp { get; set; }
     }
 }

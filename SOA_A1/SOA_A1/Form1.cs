@@ -8,9 +8,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
-using System.Net;
 using System.Web.Script.Serialization;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace SOA_A1
 {
@@ -18,11 +18,8 @@ namespace SOA_A1
     {
         private MultipleWebServices AvailibleWebServices;
         private string MyErrorMessage = "";
+        private bool InvalidParameterWasEntered = false;
 
-        //Form1()
-        //
-        //Initialization function.
-        //Initializes a nummber of UI and backend features such as the method and service lists.
         public Form1()
         {
             InitializeComponent();
@@ -32,7 +29,7 @@ namespace SOA_A1
             // check if there was an error
             if(MyErrorMessage != "")
             {
-                DispalyErrorMessage(MyErrorMessage);
+                DisplayErrorMessage(MyErrorMessage);
             }
             else
             {
@@ -52,7 +49,7 @@ namespace SOA_A1
             
         }        
 
-        private void DispalyErrorMessage(string message)
+        private void DisplayErrorMessage(string message)
         {
             if(message.Length > MyConstants.MaxErrorMessageCharacters)
             {
@@ -62,12 +59,8 @@ namespace SOA_A1
             MessageBox.Show(message, "An Error Has Occurred");
         }
 
-        //GetWebServices()
-        //
-        //Initialization function.
-        //Reads the config file and returns a class containing relevant information on
-        //the webservices and methods documented in the config file.
-         private MultipleWebServices GetWebServices()
+
+        private MultipleWebServices GetWebServices()
         {
             string myConfigFileData = "";
             MyErrorMessage = ""; // reset error message
@@ -141,141 +134,142 @@ namespace SOA_A1
         //    }
         //}
 
-        //btnSendRequest_Click()
-        //
-        //Event driven function driven by the send request button.
-        //Builds and sends a webrequest to a selected web service, 
-        //then receives, parses and displays a web response.
+
         private void btnSendRequest_Click(object sender, EventArgs e)
         {
-            string postUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServicePostUrl;
-            string baseUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceBaseUrl;
-            string webMethodUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].MethodUrl;
-            string methodName = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].MethodName;
-            bool methodReturnsDataSet = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ReturnsDataSet;
-            string responseFromServer = "";
-            bool argsOkay = true;
-
-            bool useTns = false;
-            string tnsString = "";
-
-            if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].UseTns)
+            if (InvalidParameterWasEntered)
             {
-                useTns = true;
-
-                //the method uses tns so we will need to append the text "tns:" to some of the tags
-                tnsString = "tns:";
-            }
-
-            //create the beginning of the web request text
-            string webRequestText = @"<?xml version='1.0' encoding='UTF-8'?><soap:Envelope xmlns:soap='" + MyConstants.SoapEnvelopeUrl;
-
-            if (useTns)
-            {
-                webRequestText += "' xmlns:tns='" + webMethodUrl;
-            }
-
-            webRequestText += "' xmlns:xsi='" + MyConstants.XmlSchemaInstanceUrl +
-                "' xmlns:xsd='" + MyConstants.XmlSchemaUrl +
-                "'><soap:Body><" + tnsString + methodName + " xmlns='" + baseUrl + "'>";
-
-            // check if the method we're calling has parameters
-            if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo != null && AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo.ToString() != "")
-            {
-                //add parameters to the web request text
-                foreach (var parameter in AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo)
-                {
-                    if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo[0].Required == true && (parameter.ParamValue == "" || parameter.ParamValue == null))
-                    {
-                        argsOkay = false;
-                        break;
-                    }
-                    webRequestText += "<" + tnsString + parameter.ParamName +
-                    ">" + parameter.ParamValue +
-                    "</" + tnsString + parameter.ParamName +
-                    ">";
-                }
-            }
-
-            if (argsOkay == true)
-            {
-                //finish the web request text
-                webRequestText += "</" + tnsString + methodName + "></soap:Body></soap:Envelope>";
-
-
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
-                request.Headers.Add("SOAPAction", webMethodUrl);
-                request.ContentType = "text/xml;charset=\"utf-8\"";
-                request.Accept = "text/xml";
-                request.Method = "POST";
-
-
-                try
-                {
-                    Stream stm = request.GetRequestStream();
-
-                    //write the data to the stream acquired from request
-                    using (StreamWriter stmw = new StreamWriter(stm))
-                    {
-                        stmw.Write(webRequestText);
-                    }
-
-                    //get the response from the web service
-                    WebResponse response = request.GetResponse();
-
-                    stm.Close();
-
-                    stm = response.GetResponseStream();
-
-                    //parse out any information in the services response
-                    using (StreamReader stmr = new StreamReader(stm))
-                    {
-                        txtRequestResponse.Text = "";
-                        StringBuilder sb = new StringBuilder();
-
-                        while (stmr.EndOfStream == false)
-                        {
-                            responseFromServer = stmr.ReadLine();
-                            sb.Append(responseFromServer);
-                            sb.Append(MyConstants.NewLine);
-                        }
-
-                        txtRequestResponse.Text = sb.ToString();
-                        DataSet set = new DataSet();
-
-                        if (methodReturnsDataSet)
-                        {
-                            XmlDocument doc = new XmlDocument();
-                            doc.LoadXml(sb.ToString());
-                            StringReader sr = new StringReader(WebUtility.HtmlDecode(doc.InnerXml));
-                            set.ReadXml(sr);
-                            XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
-                        }
-                        else
-                        {
-                            StringReader sr = new StringReader(sb.ToString());
-                            set.ReadXml(sr);
-                            XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
-                        }
-
-                    }
-                }
-                catch (WebException ex)
-                {
-                    txtRequestResponse.Text = "Unableto connect to webservice. Remote name could not be resolved.";
-                }
+                InvalidParameterWasEntered = false;
+                //and skip execution of method
             }
             else
             {
-                txtRequestResponse.Text = "Required arguments not filled.";
-            }
-        }
+                string postUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServicePostUrl;
+                string baseUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceBaseUrl;
+                string webMethodUrl = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].MethodUrl;
+                string methodName = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].MethodName;
+                bool methodReturnsDataSet = AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ReturnsDataSet;
+                string responseFromServer = "";
+                bool argsOkay = true;
 
-        //ddlWebService_SelectedIndexChanged
-        //
-        //Populates the datagridview used for user input for arguments.
-        //Automatically populates said datagridview with relevent data
-        //whenever the webservice is changed.
+                bool useTns = false;
+                string tnsString = "";
+
+                if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].UseTns)
+                {
+                    useTns = true;
+
+                    //the method uses tns so we will need to append the text "tns:" to some of the tags
+                    tnsString = "tns:";
+                }
+
+                //create the beginning of the web request text
+                string webRequestText = @"<?xml version='1.0' encoding='UTF-8'?><soap:Envelope xmlns:soap='" + MyConstants.SoapEnvelopeUrl;
+
+                if (useTns)
+                {
+                    webRequestText += "' xmlns:tns='" + webMethodUrl;
+                }
+
+                webRequestText += "' xmlns:xsi='" + MyConstants.XmlSchemaInstanceUrl +
+                    "' xmlns:xsd='" + MyConstants.XmlSchemaUrl +
+                    "'><soap:Body><" + tnsString + methodName + " xmlns='" + baseUrl + "'>";
+
+                // check if the method we're calling has parameters
+                if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo != null && AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo.ToString() != "")
+                {
+                    //add parameters to the web request text
+                    foreach (var parameter in AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo)
+                    {
+                        if (AvailibleWebServices.WebServicesList[ddlWebService.SelectedIndex].WebServiceMethods[ddlWebMethod.SelectedIndex].ParameterInfo[0].Required == true && (parameter.ParamValue == "" || parameter.ParamValue == null))
+                        {
+                            argsOkay = false;
+                            break;
+                        }
+                        webRequestText += "<" + tnsString + parameter.ParamName +
+                        ">" + parameter.ParamValue +
+                        "</" + tnsString + parameter.ParamName +
+                        ">";
+                    }
+                }
+
+                if (argsOkay == true)
+                {
+                    //finish the web request text
+                    webRequestText += "</" + tnsString + methodName + "></soap:Body></soap:Envelope>";
+
+
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
+                    request.Headers.Add("SOAPAction", webMethodUrl);
+                    request.ContentType = "text/xml;charset=\"utf-8\"";
+                    request.Accept = "text/xml";
+                    request.Method = "POST";
+
+
+                    try
+                    {
+                        Stream stm = request.GetRequestStream();
+
+                        //write the data to the stream acquired from request
+                        using (StreamWriter stmw = new StreamWriter(stm))
+                        {
+                            stmw.Write(webRequestText);
+                        }
+
+                        //get the response from the web service
+                        WebResponse response = request.GetResponse();
+
+                        stm.Close();
+
+                        stm = response.GetResponseStream();
+
+                        //parse out any information in the services response
+                        using (StreamReader stmr = new StreamReader(stm))
+                        {
+                            txtRequestResponse.Text = "";
+                            StringBuilder sb = new StringBuilder();
+
+                            while (stmr.EndOfStream == false)
+                            {
+                                responseFromServer = stmr.ReadLine();
+                                sb.Append(responseFromServer);
+                                sb.Append(MyConstants.NewLine);
+                            }
+
+                            txtRequestResponse.Text = sb.ToString();
+                            DataSet set = new DataSet();
+
+                            if (methodReturnsDataSet)
+                            {
+                                XmlDocument doc = new XmlDocument();
+                                doc.LoadXml(sb.ToString());
+                                StringReader sr = new StringReader(WebUtility.HtmlDecode(doc.InnerXml));
+                                set.ReadXml(sr);
+                                XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
+                            }
+                            else
+                            {
+                                StringReader sr = new StringReader(sb.ToString());
+                                set.ReadXml(sr);
+                                XMLGridView.DataSource = set.Tables[set.Tables.Count - 1];
+                            }
+
+                        }
+                    }
+                    catch (WebException ex)
+                    {
+                        txtRequestResponse.Text = "Unableto connect to webservice. Remote name could not be resolved.";
+                    }
+                }
+                else
+                {
+                    txtRequestResponse.Text = "Required arguments not filled.";
+                }
+
+            }
+
+        }
+        
         private void ddlWebService_SelectedIndexChanged(object sender, EventArgs e)
         {
             int index = ddlWebService.SelectedIndex;
@@ -304,11 +298,7 @@ namespace SOA_A1
 
         }
 
-        //ddlWebMethod_SelectedIndexChanged
-        //
-        //Populates the datagridview used for user input for arguments.
-        //Automatically populates said datagridview with relevent data
-        //whenever the webmethod is changed.
+
         private void ddlWebMethod_SelectedIndexChanged(object sender, EventArgs e)
         {
             int webServiceIndex = ddlWebService.SelectedIndex;
@@ -343,10 +333,7 @@ namespace SOA_A1
 
         }
 
-        //dgvParameters_CellValueChanged
-        //
-        //Event driven function that retreives and assigns argument values after
-        //they are changed.
+
         private void dgvParameters_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             int columnIndex = e.ColumnIndex;
@@ -358,9 +345,29 @@ namespace SOA_A1
             {
                 if (dgvParameters.Rows[rowIndex].Cells[columnIndex].Value != null)
                 {
-                    var newValue = dgvParameters.Rows[rowIndex].Cells[columnIndex].Value.ToString();
+                    string newParameterValue = dgvParameters.Rows[rowIndex].Cells[columnIndex].Value.ToString();
+                    string parameterName = AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].ParamName;
+                    string regexStr = AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].RegularExp;
 
-                    AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].ParamValue = newValue;
+                    Regex r = new Regex(regexStr);
+                    
+                    if (r.IsMatch(newParameterValue)) {
+                        //the value is OK; save it
+                        AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].ParamValue = newParameterValue;
+                        InvalidParameterWasEntered = false;
+                    }
+                    else
+                    {
+                        //new value did not meet the requirements
+                        string errorMessage = "The new value for '" + parameterName +
+                            "' did not meet the Regular Expression: \n\r\n\r'" + regexStr + "'";
+                        
+                        DisplayErrorMessage(errorMessage);
+
+                        AvailibleWebServices.WebServicesList[webServiceIndex].WebServiceMethods[methodIndex].ParameterInfo[rowIndex].ParamValue = "";
+                        InvalidParameterWasEntered = true;
+                    }
+                                        
                 }
                 else
                 {
